@@ -1,6 +1,6 @@
-import { Loop } from "./animate";
-import { randomLetter } from "./randomLetter";
-import { validateWord } from "./word/validateWord";
+import { Loop } from './loop';
+import { randomLetter } from './randomLetter';
+import { validateWord } from './word/validateWord';
 
 interface Letter {
     char: string,
@@ -168,6 +168,7 @@ export class Game {
             el.classList.toggle('invalid', !valid);
 
             inputEl.value = '';
+            this.#currentWord = '';
         }
     }
 }
