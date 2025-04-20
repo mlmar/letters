@@ -1,0 +1,55 @@
+.game-container {
+    position: relative;
+    border: .5em solid white;
+    max-height: 40em;
+    width: 30em;
+    overflow: hidden;
+    transition: border-color .5s ease;
+    margin: 1em 0;
+
+    .game-letter {
+        position: absolute;
+        font-size: 1.5em;
+        transition: font-weight .3s ease;
+
+        &.game-letter-focus {
+            font-weight: bold;
+            color: greenyellow;
+        }
+    }
+
+    &.valid {
+        @keyframes valid {
+            0% { border-color: white;}
+            50% { border-color: greenyellow;}
+            100% { border-color: white;}
+        }
+        animation: valid 1s;
+    }
+
+    &.invalid {
+        @keyframes invalid {
+            0% { border-color: white; }
+            50% { border-color: red; }
+            100% { border-color: white;}
+        }
+        animation: invalid 1s;
+    }
+}
+
+label[data-game-score] {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+input[data-game-input] {
+    font-size: 1.5em;
+    font-weight: bold;
+    text-align: center;
+    border: none;
+    border-bottom: solid white .1em;
+
+    &:focus {
+        outline: unset;
+    }
+}
