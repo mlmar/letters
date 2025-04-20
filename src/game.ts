@@ -6,6 +6,7 @@ interface Letter {
     char: string,
     node: HTMLElement,
     speed: number,
+    active: boolean,
     position: {
         x: number,
         y: number
@@ -20,6 +21,7 @@ export class Game {
     el: HTMLElement | null = null;
     inputEl: HTMLInputElement | null = null;
     scoreEl: HTMLLabelElement | null = null;
+    livesEl: HTMLLabelElement | null = null;
 
     #loop: Loop = new Loop();
 
@@ -28,9 +30,10 @@ export class Game {
 
     #width: number = 20;
     #height: number = 60;
-    #spawnRate: number = 60;
+    #spawnRate: number = 80;
 
     #score: number = 0;
+    #lives: number = 3;
     #focusedLetters: Set<Letter> = new Set<Letter>();
     #usedWords: Set<string> = new Set<string>();
     #currentWord: string = '';
@@ -41,7 +44,8 @@ export class Game {
         this.inputEl = document.querySelector(`${query} + input[data-game-input]`)!;
         this.inputEl.addEventListener('input', this.#handleInputChange);
         this.inputEl.addEventListener('keydown', this.#handleInputKeyDown);
-        this.scoreEl = this.el.parentElement!.querySelector('[data-game-score]')!
+        this.scoreEl = this.el.parentElement!.querySelector('[data-game-score]')!;
+        this.livesEl = this.el.parentElement!.querySelector('[data-game-lives]')!;
 
         this.start = this.start.bind(this);
         this.stop = this.stop.bind(this);
@@ -59,6 +63,7 @@ export class Game {
 
     reset() {
         this.#score = 0;
+        this.#lives = 3;
         this.#letters = [];
         this.#letterCounts = {};
         this.#usedWords.clear();
@@ -80,26 +85,43 @@ export class Game {
             this.#renderLetter(letter);
         });
 
-        this.scoreEl!.innerText = this.#score.toString(); 
+        this.#removeDeactivatedLetters();
 
-        this.#removeExpiredLetters();
+        this.scoreEl!.innerText = this.#score.toString();
+        this.livesEl!.innerHTML =`${this.#lives.toString()} &#9829;`;
+
+        if(this.#lives === 0) {
+            this.#loop.stop();
+        }
     }
 
     // Clear letters when they leave the view
-    #removeExpiredLetters = () => {
+    #removeDeactivatedLetters = () => {
         this.#letters = this.#letters.filter((letter) => {
             if(letter.position.y >= this.#height - 2) {
-                this.#removeLetter(letter);
+                if(letter.active) {
+                    this.#removeLife()
+                }
+                this.#deactiveLetter(letter);
                 return false;
             }
             return true;
         });
     }
 
-    #removeLetter = (letter: Letter) => {
+    #deactiveLetter = (letter: Letter) => {
         letter.node.remove();
+        letter.active = false;
         this.#letterCounts[letter.char]--;
         this.#focusedLetters.delete(letter);
+    }
+
+    #removeLife = () => {
+        this.#lives = Math.max(--this.#lives, 0);
+        const el = this.el!;
+        el.classList.remove('valid', 'invalid');
+        el.offsetHeight; // Trigger DOM reflow
+        el.classList.add('invalid');
     }
 
     #addLetter = () => {
@@ -131,7 +153,7 @@ export class Game {
 
     #renderLetter = (letter: Letter) => {
         const bounds = this.el!.getBoundingClientRect();
-        let containerWidth = bounds.width;
+        let containerWidth = bounds.width - letter.node.clientWidth;
         containerWidth = containerWidth - (containerWidth / this.#width);
         const containerHeight = bounds.height;
         const node = letter.node;
@@ -156,7 +178,7 @@ export class Game {
             if(valid) {
                 this.#focusedLetters.forEach((letter) => {
                     this.#score++;
-                    this.#removeLetter(letter);
+                    this.#deactiveLetter(letter);
                 });
                 this.#usedWords.add(word);
             }
@@ -179,7 +201,8 @@ function createLetter(char: string): Letter {
     return {
         char,
         node: node.content.children[0] as HTMLElement,
-        speed: .15,
+        speed: .12,
+        active: true,
         position: {
             x: 0,
             y: 0

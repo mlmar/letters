@@ -1,7 +1,7 @@
 .game-container {
     position: relative;
     border: .5em solid white;
-    max-height: 40em;
+    max-height: 45em;
     width: 30em;
     overflow: hidden;
     transition: border-color .5s ease;
@@ -9,11 +9,11 @@
 
     .game-letter {
         position: absolute;
-        font-size: 1.5em;
+        font-size: 2.5em;
+        font-weight: bold;
         transition: font-weight .3s ease;
 
         &.game-letter-focus {
-            font-weight: bold;
             color: greenyellow;
         }
     }
@@ -37,17 +37,22 @@
     }
 }
 
-label[data-game-score] {
-    font-size: 1.5em;
+.game-header {
+    width: 30em;
+    justify-content: space-between;
+}
+
+label[data-game-score],
+label[data-game-lives] {
+    font-size: 2.5em;
     font-weight: bold;
 }
 
 input[data-game-input] {
-    font-size: 1.5em;
+    font-size: 2.5em;
     font-weight: bold;
     text-align: center;
     border: none;
-    border-bottom: solid white .1em;
 
     &:focus {
         outline: unset;
