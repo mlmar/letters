@@ -177,9 +177,9 @@ export class Game {
             const valid = !this.#usedWords.has(word) && validateWord(word);
             if(valid) {
                 this.#focusedLetters.forEach((letter) => {
-                    this.#score++;
                     this.#deactiveLetter(letter);
                 });
+                this.#score += word.length;
                 this.#usedWords.add(word);
             }
             
