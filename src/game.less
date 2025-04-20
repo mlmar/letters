@@ -1,3 +1,7 @@
+@color-green: rgb(24, 255, 43);
+@color-red: rgb(255, 57, 57);
+@color-blue: rgb(30, 120, 255);
+
 .game-container {
     position: relative;
     border: .5em solid white;
@@ -21,7 +25,7 @@
     &.valid {
         @keyframes valid {
             0% { border-color: white;}
-            50% { border-color: greenyellow;}
+            50% { border-color: @color-green;}
             100% { border-color: white;}
         }
         animation: valid 1s;
@@ -30,10 +34,19 @@
     &.invalid {
         @keyframes invalid {
             0% { border-color: white; }
-            50% { border-color: red; }
+            50% { border-color: @color-red; }
             100% { border-color: white;}
         }
         animation: invalid 1s;
+    }
+
+    &.bonus {
+        @keyframes bonus {
+            0% { border-color: white; }
+            50% { border-color: @color-blue; }
+            100% { border-color: white;}
+        }
+        animation: bonus 1s;
     }
 }
 
@@ -46,6 +59,14 @@ label[data-game-score],
 label[data-game-lives] {
     font-size: 2.5em;
     font-weight: bold;
+}
+
+label[data-game-score] {
+    color: @color-green;
+}
+
+label[data-game-lives] {
+    color: @color-red;
 }
 
 input[data-game-input] {

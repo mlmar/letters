@@ -54,6 +54,7 @@ export class Game {
 
     start() {
         this.reset();
+        this.inputEl?.focus();
         this.#loop.start(this.#handleLoop);
     }
 
@@ -178,22 +179,41 @@ export class Game {
             const word = inputEl.value;
             const valid = !this.#usedWords.has(word) && validateWord(word);
             if(valid) {
-                this.#focusedLetters.forEach((letter) => {
-                    this.#deactiveLetter(letter);
-                });
-                this.#score += word.length;
+                // Determine if all active letters on the board were used
+                const allLettersUsed = this.#focusedLetters.size === this.#letters.reduce((total, letter) => {
+                    if(letter.active) {
+                        return total + 1;
+                    }
+                    return total;
+                }, 0);
+
+                // If all letters are used and more than 1 letter was used then dobule the score
+                if(allLettersUsed && this.#focusedLetters.size > 1) {
+                    this.#score += word.length * 2;
+                    this.#toggleAnimationClass('bonus');
+                } else {
+                    this.#score += word.length;
+                    this.#toggleAnimationClass('valid');
+                }
+
+                this.#focusedLetters.forEach(this.#deactiveLetter);
                 this.#usedWords.add(word);
+                
+            } else {
+                this.#toggleAnimationClass('invalid', !valid);
             }
-            
-            const el = this.el!;
-            el.classList.remove('valid', 'invalid');
-            el.offsetHeight; // Trigger DOM reflow
-            el.classList.toggle('valid', valid);
-            el.classList.toggle('invalid', !valid);
 
             inputEl.value = '';
             this.#currentWord = '';
         }
+    }
+
+    // Toggles class name animation by triggering DOM reflow
+    #toggleAnimationClass = (className: string, add: boolean = true) => {
+        const el = this.el!;
+        el.classList.remove('valid', 'invalid', 'bonus');
+        el.offsetHeight; // Trigger DOM reflow
+        el.classList.toggle(className, add);
     }
 }
 
