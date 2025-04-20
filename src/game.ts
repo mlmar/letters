@@ -140,12 +140,14 @@ export class Game {
         const inputLetters = this.#currentWord.split('');
         this.#focusedLetters.clear();
         this.#letters.forEach((letter) => {
-            for(const i in inputLetters) {
-                const char = inputLetters[i];
-                if(letter.char === char) {
-                    inputLetters.splice(parseInt(i), 1);
-                    this.#focusedLetters.add(letter);
-                    break;
+            if(letter.active) {
+                for(const i in inputLetters) {
+                    const char = inputLetters[i];
+                    if(letter.char === char) {
+                        inputLetters.splice(parseInt(i), 1);
+                        this.#focusedLetters.add(letter);
+                        break;
+                    }
                 }
             }
         });
