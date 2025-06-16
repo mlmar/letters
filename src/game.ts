@@ -22,6 +22,7 @@ export class Game {
     inputEl: HTMLInputElement | null = null;
     scoreEl: HTMLLabelElement | null = null;
     livesEl: HTMLLabelElement | null = null;
+    gameOverMessageEl: HTMLLabelElement | null = null;
 
     #loop: Loop = new Loop();
 
@@ -29,11 +30,15 @@ export class Game {
     #letterCounts: LetterCounts = {}
 
     #width: number = 20;
-    #height: number = 60;
+    #height: number = 70;
     #spawnRate: number = 80;
 
     #score: number = 0;
     #lives: number = 3;
+    #minLetterSpeed: number = .11;
+    #maxLetterSpeed: number = .15;
+    #spinProbability: number = .1;
+
     #focusedLetters: Set<Letter> = new Set<Letter>();
     #usedWords: Set<string> = new Set<string>();
     #currentWord: string = '';
@@ -46,6 +51,7 @@ export class Game {
         this.inputEl.addEventListener('keydown', this.#handleInputKeyDown);
         this.scoreEl = this.el.parentElement!.querySelector('[data-game-score]')!;
         this.livesEl = this.el.parentElement!.querySelector('[data-game-lives]')!;
+        this.gameOverMessageEl = this.el.parentElement!.querySelector('[data-game-over-message]')!;
 
         this.start = this.start.bind(this);
         this.stop = this.stop.bind(this);
@@ -96,17 +102,20 @@ export class Game {
         this.livesEl!.innerHTML =`${this.#lives.toString()} &#9829;`;
 
         // Remove any game over messages or visual cues
-        const gameOverMessage = this.el?.querySelector('.game-over-message'); // Assuming a class for game over messages
-        if (gameOverMessage && gameOverMessage.parentNode === this.el) {
-            this.el.removeChild(gameOverMessage);
+        if(this.el) {
+            this.#displayGameOver(false);
+    
+            // Remove any active animation classes
+            this.el.classList.remove('valid', 'invalid', 'bonus');
         }
-
-        // Remove any active animation classes
-        this.el?.classList.remove('valid', 'invalid', 'bonus');
 
         console.log("Game state reset.");
     }
 
+    // Add a new letter every frame
+    // Update score
+    // Render selected letters
+    // Remove out of view letters
     #handleLoop = (frame: number, multiplier: number) => {
         const tick = frame % this.#spawnRate;
         if(tick === 0) {
@@ -126,11 +135,11 @@ export class Game {
 
         if(this.#lives === 0) {
             this.stop(); 
-            this.#displayGameOver();
+            this.#displayGameOver(true);
         }
     }
 
-   
+    // Clear letters when they leave the view
     #removeDeactivatedLetters = () => {
         this.#letters = this.#letters.filter((letter) => {
             if(letter.position.y >= this.#height - 2) {
@@ -162,6 +171,8 @@ export class Game {
     #addLetter = () => {
         const letter = createLetter(randomLetter()); 
         randomizeLetterPosition(letter, this.#width) 
+        randomizeLetterSpeed(letter, this.#minLetterSpeed, this.#maxLetterSpeed);
+        randomizeSpin(letter, this.#spinProbability);
         this.#letters.push(letter);
         this.#letterCounts[letter.char] = (this.#letterCounts[letter.char] || 0) + 1;
 
@@ -170,6 +181,7 @@ export class Game {
         }
     }
 
+    // Highlights letters based on user input
     #focusInputLetters = () => {
         const inputLetters = this.#currentWord.split('');
         this.#focusedLetters.clear();
@@ -198,21 +210,21 @@ export class Game {
         node.classList.toggle('game-letter-focus', this.#focusedLetters.has(letter));
     }
     
-   
+    // Validate input
     #handleInputChange = () => {
         const inputEl = this.inputEl!;
         inputEl.value = inputEl.value.trim().replace(/[^A-Za-z]/g, '').toUpperCase();
         this.#currentWord = inputEl.value;
     }
 
-   
+    // Validate word
     #handleInputKeyDown = (event: KeyboardEvent) => {
         if(event.key === 'Enter') {
             const inputEl = this.inputEl!;
             const word = inputEl.value;
             const valid = !this.#usedWords.has(word) && validateWord(word);
             if(valid) {
-               
+                // Determine if all active letters on the board were used
                 const allLettersUsed = this.#focusedLetters.size === this.#letters.reduce((total, letter) => {
                     if(letter.active) {
                         return total + 1;
@@ -220,6 +232,7 @@ export class Game {
                     return total;
                 }, 0);
 
+                // If all letters are used and more than 1 letter was used then dobule the score
                 if(allLettersUsed && this.#focusedLetters.size > 1) {
                     this.#score += word.length * 2;
                     this.#toggleAnimationClass('bonus');
@@ -249,23 +262,15 @@ export class Game {
     }
 
     // NONNY ADDITION: Display game over message
-    #displayGameOver = () => {
-        const gameOverMessage = document.createElement('div');
-        gameOverMessage.classList.add('game-over-message'); 
-        gameOverMessage.textContent = `Nice Try Bucko! Your score: ${this.#score}`;
-        
-        gameOverMessage.style.position = 'absolute';
-        gameOverMessage.style.top = '50%';
-        gameOverMessage.style.left = '50%';
-        gameOverMessage.style.transform = 'translate(-50%, -50%)';
-        gameOverMessage.style.fontSize = '2.5em';
-        gameOverMessage.style.color = '#fff';
-        gameOverMessage.style.backgroundColor = 'rgba(0,0,0,0.7)';
-        gameOverMessage.style.padding = '20px 40px';
-        gameOverMessage.style.borderRadius = '10px';
-        gameOverMessage.style.zIndex = '1000'; 
-
-        this.el?.appendChild(gameOverMessage);
+    #displayGameOver = (visible: boolean) => {
+        if(this.gameOverMessageEl) {
+            this.gameOverMessageEl.textContent = `Nice Try Bucko! Your score: ${this.#score}`;
+            if(visible) {
+                this.gameOverMessageEl.style.display = 'flex';
+            } else {
+                this.gameOverMessageEl.style.display = 'none';
+            }
+        }
     }
 }
 function createLetter(char: string): Letter {
@@ -285,4 +290,19 @@ function createLetter(char: string): Letter {
 
 function randomizeLetterPosition(letter: Letter, width: number) {
     letter.position.x = Math.random() * width;
+}
+
+function randomizeLetterSpeed(letter: Letter, min: number, max: number) {
+    const speed = Math.random() * (max - min) + min;
+    letter.speed = speed;
+}
+
+function randomizeSpin(letter: Letter, probability: number) {
+    if(Math.random() <= probability) { // If within probability
+        if(Math.random() <= .5) { // 50-50 chance to spin either direction
+            letter.node.classList.add('game-letter-spin');
+        } else {
+            letter.node.classList.add('game-letter-spin-reverse');
+        }
+    }
 }

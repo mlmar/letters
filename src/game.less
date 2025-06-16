@@ -20,6 +20,19 @@
         &.game-letter-focus {
             color: greenyellow;
         }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg) }
+            100% { transform: rotate(360deg) }
+        }
+
+        &.game-letter-spin {
+            animation: spin infinite linear 8s;
+        }
+
+        &.game-letter-spin-reverse {
+            animation: spin infinite reverse linear 8s;
+        }
     }
 
     &.valid {
@@ -68,6 +81,22 @@ label[data-game-score] {
 label[data-game-lives] {
     color: @color-red;
 }
+
+label[data-game-over-message] {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2.5em;
+    color: white;
+    background-color: rgba(0,0,0,0.7);
+    padding: 1em 2em;
+    border-radius: 1em;
+    z-index: 1000; 
+    width: 25%;
+}
+
 
 input[data-game-input] {
     font-size: 2.5em;
