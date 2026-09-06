@@ -1,15 +1,18 @@
-@color-green: rgb(24, 255, 43);
-@color-red: rgb(255, 57, 57);
-@color-blue: rgb(30, 120, 255);
+@import './colors.less';
+
+@border-radius: .2em;
 
 .game-container {
+    outline: .5em solid white;
     position: relative;
-    border: .5em solid white;
     max-height: 45em;
     width: 30em;
     overflow: hidden;
     transition: border-color .5s ease;
     margin: 1em 0;
+
+    border-top-left-radius: @border-radius;
+    border-top-right-radius: @border-radius;
 
     .game-letter {
         position: absolute;
@@ -90,11 +93,11 @@ label[data-game-over-message] {
     transform: translate(-50%, -50%);
     font-size: 2.5em;
     color: white;
-    background-color: rgba(0,0,0,0.7);
+    background-color: rgba(0, 0, 0, .9);
     padding: 1em 2em;
-    border-radius: 1em;
+    border-radius: @border-radius;
     z-index: 1000; 
-    width: 25%;
+    text-align: center;
 }
 
 
@@ -104,7 +107,26 @@ input[data-game-input] {
     text-align: center;
     border: none;
 
+    border-bottom-left-radius: @border-radius;
+    border-bottom-right-radius: @border-radius;
+
     &:focus {
         outline: unset;
+    }
+}
+
+button[data-restart-btn] {
+    border: .1rem solid white;
+    border-radius: 1em;
+    outline: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 0 1em;
+    transition: transform .1s linear, background .2s ease, color .2s ease;
+
+    &:hover {
+        background: white;
+        color: black;
+        transform: scale(1.1);
     }
 }
