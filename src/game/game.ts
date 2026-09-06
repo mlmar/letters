@@ -1,6 +1,6 @@
 import { Loop } from './loop';
 import { randomLetter } from './randomLetter';
-import { validateWord } from './word/validateWord';
+import { validateWord } from '#/word/validateWord';
 
 interface Letter {
     char: string,

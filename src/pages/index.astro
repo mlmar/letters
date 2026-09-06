@@ -1,6 +1,6 @@
 ---
-import '../style.less';
-import '../game.less';
+import '#/styles/style.less';
+import '#/styles/game.less';
 ---
 
 <!doctype html>
@@ -25,7 +25,7 @@ import '../game.less';
 </html>
 
 <script>
-  import { Game } from '../game';
+  import { Game } from '#/game/game';
 
   const game = new Game('#game-container');
   game.start();
