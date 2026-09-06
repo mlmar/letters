@@ -1,26 +1,54 @@
 @import './colors.less';
 
-@border-radius: .2em;
-@board-width: clamp(16em, 90vw, 30em);
-@board-aspect: 2 / 3;
-@type-size: clamp(1.5em, 5vw, 2.5em);
+@keyframes valid {
+    0% { border-color: var(--color-chrome); }
+    50% { border-color: var(--color-valid); }
+    100% { border-color: var(--color-chrome); }
+}
+
+@keyframes invalid {
+    0% { border-color: var(--color-chrome); }
+    50% { border-color: var(--color-invalid); }
+    100% { border-color: var(--color-chrome); }
+}
+
+@keyframes bonus {
+    0% { border-color: var(--color-chrome); }
+    50% { border-color: var(--color-bonus); }
+    100% { border-color: var(--color-chrome); }
+}
+
+.game-board {
+    width: var(--board-width);
+    border: var(--frame-width) solid var(--color-chrome);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    transition: border-color .5s ease;
+
+    &:has(> .game-container.valid) {
+        animation: valid 1s;
+    }
+
+    &:has(> .game-container.invalid) {
+        animation: invalid 1s;
+    }
+
+    &:has(> .game-container.bonus) {
+        animation: bonus 1s;
+    }
+}
 
 .game-container {
-    outline: .5em solid var(--color-chrome);
     position: relative;
-    width: @board-width;
-    aspect-ratio: @board-aspect;
+    width: 100%;
+    aspect-ratio: var(--board-aspect);
     overflow: hidden;
-    transition: outline-color .5s ease;
-
-    border-top-left-radius: @border-radius;
-    border-top-right-radius: @border-radius;
 
     .game-letter {
         position: absolute;
         top: 0;
         left: 0;
-        font-size: @type-size;
+        font-size: var(--type-size);
         font-weight: bold;
         will-change: transform;
 
@@ -46,37 +74,10 @@
             animation: spin infinite reverse linear 8s;
         }
     }
-
-    &.valid {
-        @keyframes valid {
-            0% { outline-color: var(--color-chrome); }
-            50% { outline-color: var(--color-valid); }
-            100% { outline-color: var(--color-chrome); }
-        }
-        animation: valid 1s;
-    }
-
-    &.invalid {
-        @keyframes invalid {
-            0% { outline-color: var(--color-chrome); }
-            50% { outline-color: var(--color-invalid); }
-            100% { outline-color: var(--color-chrome); }
-        }
-        animation: invalid 1s;
-    }
-
-    &.bonus {
-        @keyframes bonus {
-            0% { outline-color: var(--color-chrome); }
-            50% { outline-color: var(--color-bonus); }
-            100% { outline-color: var(--color-chrome); }
-        }
-        animation: bonus 1s;
-    }
 }
 
 .game-header {
-    width: @board-width;
+    width: var(--board-width);
     justify-content: space-between;
     align-items: center;
     gap: .5em;
@@ -88,7 +89,7 @@
 }
 
 .game-score {
-    font-size: @type-size;
+    font-size: var(--type-size);
     font-weight: bold;
     color: var(--color-score);
 }
@@ -96,7 +97,7 @@
 .game-lives {
     display: flex;
     gap: .15em;
-    font-size: @type-size;
+    font-size: var(--type-size);
 }
 
 .game-heart {
@@ -138,21 +139,18 @@
 
 .game-over-text {
     margin: 0;
-    font-size: @type-size;
+    font-size: var(--type-size);
     color: var(--color-foreground);
 }
 
 .game-input {
-    font-size: @type-size;
+    font-size: var(--type-size);
     font-weight: bold;
     text-align: center;
     border: none;
-    width: @board-width;
+    width: 100%;
     background: var(--color-input-bg);
     color: var(--color-input-fg);
-
-    border-bottom-left-radius: @border-radius;
-    border-bottom-right-radius: @border-radius;
 
     &:focus {
         outline: unset;
@@ -160,7 +158,7 @@
 }
 
 .game-feedback {
-    width: @board-width;
+    width: var(--board-width);
     min-height: 1.5em;
     font-size: 1em;
     text-align: center;
@@ -176,7 +174,7 @@
 }
 
 .game-used-words {
-    width: @board-width;
+    width: var(--board-width);
     margin-top: .5em;
     font-size: .9em;
 

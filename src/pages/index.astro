@@ -33,16 +33,18 @@ import '#/styles/game.less';
         </div>
       </section>
       <div class="game-panel">
-        <div id="game-container">
-          <div class="game-over-overlay" data-game-over-message role="status" hidden>
-            <div class="game-over-content">
-              <p class="game-over-text"></p>
-              <button class="game-restart-btn" data-restart-btn type="button">Restart Game</button>
+        <label class="sr-only" for="game-input">Type a word</label>
+        <div class="game-board">
+          <div id="game-container">
+            <div class="game-over-overlay" data-game-over-message role="status" hidden>
+              <div class="game-over-content">
+                <p class="game-over-text"></p>
+                <button class="game-restart-btn" data-restart-btn type="button">Restart Game</button>
+              </div>
             </div>
           </div>
+          <input id="game-input" class="game-input" data-game-input type="text" placeholder="type here" />
         </div>
-        <label class="sr-only" for="game-input">Type a word</label>
-        <input id="game-input" class="game-input" data-game-input type="text" placeholder="type here" />
         <div class="game-feedback" data-game-feedback aria-live="polite"></div>
         <details class="game-used-words">
           <summary>Used words</summary>

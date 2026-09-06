@@ -1,0 +1,22 @@
+---
+description: CSS custom property conventions for Less stylesheets
+globs: src/styles/*.less
+alwaysApply: false
+---
+
+# Style tokens
+
+Use CSS custom properties for shared design tokens. Do not introduce Less `@` variables.
+
+- Define tokens on `:root` in `src/styles/style.less` (layout/sizing) or `src/styles/colors.less` (theme colors).
+- Reference tokens with `var(--token-name)` in stylesheets.
+- Prefer `rem` for sizing tokens so width does not depend on the consuming element's font size.
+
+```less
+// ❌ BAD
+@board-width: clamp(16em, 90vw, 30em);
+.game-header { width: @board-width; }
+
+// ✅ GOOD
+.game-header { width: var(--board-width); }
+```

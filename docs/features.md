@@ -88,6 +88,7 @@ The header **Restart Game** button asks for confirmation during an active game t
 ## Technical notes
 
 - Built with TypeScript, Astro (static), and Less
+- Shared layout and sizing tokens are CSS custom properties on `:root` (not Less variables); theme colors live in `colors.less`
 - 60 FPS game loop via `requestAnimationFrame`
 - Theme preference stored in `localStorage` under `letters-theme`
 - Run locally: `npm run dev` at `http://localhost:3000/`

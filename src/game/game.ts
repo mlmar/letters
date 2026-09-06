@@ -67,16 +67,16 @@ export class Game {
     constructor(query: string) {
         this.el = document.querySelector(query)!;
         this.el.classList.add('game-container')
-        const main = this.el.parentElement!;
-        this.inputEl = main.querySelector('[data-game-input]')!;
+        const board = this.el.parentElement!;
+        this.inputEl = board.querySelector('[data-game-input]')!;
         this.inputEl.addEventListener('input', this.#handleInputChange);
         this.inputEl.addEventListener('keydown', this.#handleInputKeyDown);
-        this.scoreEl = main.querySelector('[data-game-score]')!;
-        this.livesEl = main.querySelector('[data-game-lives]')!;
+        this.scoreEl = document.querySelector('[data-game-score]')!;
+        this.livesEl = document.querySelector('[data-game-lives]')!;
         this.gameOverMessageEl = this.el.querySelector('[data-game-over-message]')!;
         this.#gameOverTextEl = this.gameOverMessageEl?.querySelector('.game-over-text') ?? null;
-        this.#feedbackEl = main.querySelector('[data-game-feedback]')!;
-        this.#usedWordsListEl = main.querySelector('[data-used-words-list]')!;
+        this.#feedbackEl = document.querySelector('[data-game-feedback]')!;
+        this.#usedWordsListEl = document.querySelector('[data-used-words-list]')!;
 
         this.#initHearts();
 
