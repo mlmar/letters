@@ -24,7 +24,7 @@ export class Game {
     livesEl: HTMLLabelElement | null = null;
     gameOverMessageEl: HTMLLabelElement | null = null;
 
-    #loop: Loop = new Loop();
+    #loop: Loop;
 
     #letters: Letter[] = []
     #letterCounts: LetterCounts = {}
@@ -53,70 +53,63 @@ export class Game {
         this.livesEl = this.el.parentElement!.querySelector('[data-game-lives]')!;
         this.gameOverMessageEl = this.el.parentElement!.querySelector('[data-game-over-message]')!;
 
-        this.start = this.start.bind(this);
-        this.stop = this.stop.bind(this);
-        this.reset = this.reset.bind(this);
+        this.#loop = new Loop(this.#tick);
     }
 
+    // Stop any running session, then reset state and start the loop
     start() {
-       
-        this.reset();
+        this.#loop.stop();
+        this.#resetState();
         this.inputEl?.focus();
-   
+
         if (this.inputEl) {
             this.inputEl.disabled = false;
         }
-        this.#loop.start(this.#handleLoop);
+        this.#loop.start();
     }
 
     stop() {
         this.#loop.stop();
-    
+
         if (this.inputEl) {
             this.inputEl.disabled = true;
         }
     }
 
-    reset() {
-       
-        this.#loop.stop(); 
-        
+    // Clear board, score, lives, and input without touching the loop
+    #resetState() {
         this.#score = 0;
         this.#lives = 3;
-        
-        this.#letters.forEach(letter => letter.node.remove());
-        this.#letters = []; 
-        this.#letterCounts = {};
-        this.#focusedLetters.clear(); 
-        this.#usedWords.clear(); 
-        this.#currentWord = ''; 
 
-       
+        this.#letters.forEach(letter => letter.node.remove());
+        this.#letters = [];
+        this.#letterCounts = {};
+        this.#focusedLetters.clear();
+        this.#usedWords.clear();
+        this.#currentWord = '';
+
         if (this.inputEl) {
             this.inputEl.value = '';
-            this.inputEl.disabled = false; 
         }
-        
+
         // Update score and lives display to initial values
         this.scoreEl!.innerText = this.#score.toString();
-        this.livesEl!.innerHTML =`${this.#lives.toString()} &#9829;`;
+        this.livesEl!.innerHTML = `${this.#lives.toString()} &#9829;`;
 
         // Remove any game over messages or visual cues
-        if(this.el) {
+        if (this.el) {
             this.#displayGameOver(false);
-    
+
             // Remove any active animation classes
             this.el.classList.remove('valid', 'invalid', 'bonus');
         }
-
-        console.log("Game state reset.");
     }
 
     // Add a new letter every frame
     // Update score
     // Render selected letters
     // Remove out of view letters
-    #handleLoop = (frame: number, multiplier: number) => {
+    #tick = (frame: number, multiplier: number) => {
         const tick = frame % this.#spawnRate;
         if(tick === 0) {
             this.#addLetter();
