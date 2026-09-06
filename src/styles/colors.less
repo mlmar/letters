@@ -1,4 +1,59 @@
-@color-green: rgb(24, 255, 43);
-@color-red: rgb(255, 57, 57);
-@color-blue: rgb(30, 120, 255);
-@color-gray: rgb(23, 23, 23);
+:root,
+[data-theme="light"] {
+    color-scheme: light;
+
+    --color-bg: rgb(245, 245, 245);
+    --color-chrome: rgb(30, 30, 30);
+    --color-foreground: rgb(30, 30, 30);
+    --color-score: rgb(0, 140, 30);
+    --color-lives: rgb(200, 30, 30);
+    --color-match: rgb(100, 180, 0);
+    --color-valid: rgb(0, 140, 30);
+    --color-invalid: rgb(200, 30, 30);
+    --color-bonus: rgb(30, 100, 220);
+    --color-overlay-backdrop: rgba(0, 0, 0, 0.75);
+    --color-input-bg: rgb(255, 255, 255);
+    --color-input-fg: rgb(30, 30, 30);
+    --color-feedback-valid: rgb(0, 140, 30);
+    --color-feedback-invalid: rgb(200, 30, 30);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        color-scheme: dark;
+
+        --color-bg: rgb(23, 23, 23);
+        --color-chrome: rgb(255, 255, 255);
+        --color-foreground: rgb(255, 255, 255);
+        --color-score: rgb(24, 255, 43);
+        --color-lives: rgb(255, 57, 57);
+        --color-match: rgb(173, 255, 47);
+        --color-valid: rgb(24, 255, 43);
+        --color-invalid: rgb(255, 57, 57);
+        --color-bonus: rgb(30, 120, 255);
+        --color-overlay-backdrop: rgba(0, 0, 0, 0.85);
+        --color-input-bg: rgb(35, 35, 35);
+        --color-input-fg: rgb(255, 255, 255);
+        --color-feedback-valid: rgb(24, 255, 43);
+        --color-feedback-invalid: rgb(255, 57, 57);
+    }
+}
+
+[data-theme="dark"] {
+    color-scheme: dark;
+
+    --color-bg: rgb(23, 23, 23);
+    --color-chrome: rgb(255, 255, 255);
+    --color-foreground: rgb(255, 255, 255);
+    --color-score: rgb(24, 255, 43);
+    --color-lives: rgb(255, 57, 57);
+    --color-match: rgb(173, 255, 47);
+    --color-valid: rgb(24, 255, 43);
+    --color-invalid: rgb(255, 57, 57);
+    --color-bonus: rgb(30, 120, 255);
+    --color-overlay-backdrop: rgba(0, 0, 0, 0.85);
+    --color-input-bg: rgb(35, 35, 35);
+    --color-input-fg: rgb(255, 255, 255);
+    --color-feedback-valid: rgb(24, 255, 43);
+    --color-feedback-invalid: rgb(255, 57, 57);
+}

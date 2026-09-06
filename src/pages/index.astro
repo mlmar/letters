@@ -8,32 +8,66 @@ import '#/styles/game.less';
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>letters</title>
+    <meta name="description" content="Type words from falling letters before they reach the bottom." />
+    <title>Letters</title>
+    <script is:inline>
+      (function () {
+        const stored = localStorage.getItem('letters-theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.dataset.theme = stored || (prefersDark ? 'dark' : 'light');
+      })();
+    </script>
   </head>
   <body>
     <main id="main" class="flex-col middle center">
       <section class="flex fit game-header">
-        <label data-game-score> 0 </label>
-        <label data-game-lives> 0 &#9829; </label>
-        <button data-restart-btn> Restart Game </button>
+        <output class="game-score" data-game-score aria-live="polite">0</output>
+        <span class="game-lives" data-game-lives aria-live="polite">
+          <span class="game-heart">&#9829;</span>
+          <span class="game-heart">&#9829;</span>
+          <span class="game-heart">&#9829;</span>
+        </span>
+        <div class="game-header-actions">
+          <button class="game-theme-toggle" data-theme-toggle type="button">Theme</button>
+          <button class="game-restart-btn" data-restart-btn type="button">Restart Game</button>
+        </div>
       </section>
-      <label data-game-over-message></label>
-      <div id="game-container" class="flex-col"> </div>
-      <input data-game-input type="text" autofocus placeholder="type here"/>
+      <div class="game-panel">
+        <div id="game-container">
+          <div class="game-over-overlay" data-game-over-message role="status" hidden>
+            <div class="game-over-content">
+              <p class="game-over-text"></p>
+              <button class="game-restart-btn" data-restart-btn type="button">Restart Game</button>
+            </div>
+          </div>
+        </div>
+        <label class="sr-only" for="game-input">Type a word</label>
+        <input id="game-input" class="game-input" data-game-input type="text" placeholder="type here" />
+        <div class="game-feedback" data-game-feedback aria-live="polite"></div>
+        <details class="game-used-words">
+          <summary>Used words</summary>
+          <ul class="game-used-words-list" data-used-words-list></ul>
+        </details>
+      </div>
     </main>
   </body>
 </html>
 
 <script>
   import { Game } from '#/game/game';
+  import { initTheme } from '#/theme';
+
+  initTheme();
 
   const game = new Game('#game-container');
   game.start();
 
-  const restartButton = document.querySelector('[data-restart-btn]');
-  if (restartButton) {
-    restartButton.addEventListener('click', () => {
-      game.start();
+  document.querySelectorAll('[data-restart-btn]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const isOverlayRestart = btn.closest('[data-game-over-message]');
+      if (isOverlayRestart || !game.isPlaying() || confirm('Restart and lose current progress?')) {
+        game.start();
+      }
     });
-  }
+  });
 </script>

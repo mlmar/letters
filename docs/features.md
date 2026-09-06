@@ -24,7 +24,7 @@ The text field below the play area is where you type. Input is sanitized as you 
 
 ### Letter matching
 
-As you type, falling letters that match the current word are highlighted in green-yellow. Each character in your word can match at most one letter on the board.
+As you type, falling letters that match the current word are highlighted. Each character in your word can match at most one letter on the board.
 
 ### Word submission
 
@@ -33,7 +33,7 @@ Press Enter to submit the current word. The game checks two things:
 1. The word is in the bundled English dictionary
 2. The word has not already been used in this session
 
-If both checks pass, matching letters are removed from the board and you score points. Duplicate or invalid words are rejected.
+If both checks pass, matching letters are removed from the board and you score points. Duplicate or invalid words are rejected with distinct feedback messages below the input.
 
 ## Scoring
 
@@ -42,23 +42,25 @@ If both checks pass, matching letters are removed from the board and you score p
 
 Visual feedback on submit:
 
-- Green border flash — valid word
-- Blue border flash — bonus (all letters used)
-- Red border flash — invalid or duplicate word
+- Green outline flash — valid word
+- Blue outline flash — bonus (all letters used)
+- Red outline flash — invalid or duplicate word
+- Text feedback below the input shows the word, points earned, or rejection reason
 
 ## Lives and game over
 
-The game starts with **3 lives**, shown as hearts in the header.
+The game starts with **3 lives**, shown as three hearts in the header. Lost lives appear dimmed.
 
-You lose 1 life when an active letter reaches the bottom of the play area without being cleared. Losing a life also flashes the play area border red.
+You lose 1 life when an active letter reaches the bottom of the play area without being cleared. Losing a life also flashes the play area outline red.
 
 At 0 lives:
 
 - The game loop stops
 - The input field is disabled
-- An overlay appears: *Nice Try Bucko! Your score: {score}*
+- A full-board overlay appears: *Nice Try Bucko! Your score: {score}*
+- The overlay includes a **Restart Game** button
 
-The **Restart Game** button resets score, lives, falling letters, and the used-word history, then starts a new game.
+The header **Restart Game** button asks for confirmation during an active game to prevent accidental resets. It resets score, lives, falling letters, and the used-word history, then starts a new game.
 
 ## UI elements
 
@@ -66,21 +68,27 @@ The **Restart Game** button resets score, lives, falling letters, and the used-w
 |---------|-----------|------|
 | Score | `data-game-score` | Current score |
 | Lives | `data-game-lives` | Remaining hearts |
+| Theme toggle | `data-theme-toggle` | Switch light/dark theme |
 | Restart | `data-restart-btn` | Start a new game |
 | Play area | `#game-container` | Falling letters |
 | Input | `data-game-input` | Word entry |
+| Feedback | `data-game-feedback` | Last submission result |
+| Used words | `data-used-words-list` | Words already played this session |
 | Game over | `data-game-over-message` | End-of-game overlay |
 
 ## Visual polish
 
-- Monospace font, with light/dark color scheme support
-- Play area with a white border that animates green, red, or blue on valid, invalid, or bonus submissions
+- Monospace font with light and dark themes, plus a manual theme toggle in the header
+- Play area with a fixed aspect ratio
+- Play area outline that animates green, red, or blue on valid, invalid, or bonus submissions
 - Some letters spin clockwise or counter-clockwise as they fall
-- Restart button scales and inverts colors on hover
+- Restart and theme buttons scale and invert colors on hover
+- Responsive sizing via `clamp()` on small screens
 
 ## Technical notes
 
 - Built with TypeScript, Astro (static), and Less
 - 60 FPS game loop via `requestAnimationFrame`
+- Theme preference stored in `localStorage` under `letters-theme`
 - Run locally: `npm run dev` at `http://localhost:3000/`
 - Production is served under `/letters/` on GitHub Pages; builds are automated via GitHub Actions to the `v1/build` branch (see [deployment.md](./deployment.md))
