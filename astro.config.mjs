@@ -3,7 +3,7 @@ import { loadEnv } from 'vite';
 
 const mode = process.argv.includes('dev') ? 'development' : 'production';
 const env = loadEnv(mode, process.cwd(), '');
-const base = env.BASE_PATH || '/';
+const base = env.BASE_PATH || process.env.BASE_PATH || '/';
 
 export default defineConfig({
   base,

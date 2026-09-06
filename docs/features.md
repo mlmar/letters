@@ -83,4 +83,4 @@ The **Restart Game** button resets score, lives, falling letters, and the used-w
 - Built with TypeScript, Astro (static), and Less
 - 60 FPS game loop via `requestAnimationFrame`
 - Run locally: `npm run dev` at `http://localhost:3000/`
-- Production is served under `/letters/` on GitHub Pages (`npm run deploy`)
+- Production is served under `/letters/` on GitHub Pages; builds are automated via GitHub Actions to the `v1/build` branch (see [deployment.md](./deployment.md))
